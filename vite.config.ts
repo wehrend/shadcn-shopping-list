@@ -1,13 +1,15 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import path from "path"; // Wird für die Pfad-Aliase benötigt
+import tailwindcss from "@tailwindcss/vite"; // ← add this
+import path from "path";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    tailwindcss(), // ← add this
+  ],
   resolve: {
     alias: {
-      // Das sorgt dafür, dass '@' auf deinen 'src'-Ordner verweist
       "@": path.resolve(__dirname, "./src"),
     },
   },
