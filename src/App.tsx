@@ -1,12 +1,18 @@
-import { CheckCircleIcon } from "lucide-react";
+import {
+  CheckCircleIcon,
+  DessertIcon,
+  TrashIcon,
+  Undo2Icon,
+} from "lucide-react";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 type Product = {
   name: string;
   quantity: number;
+  checked: boolean;
 };
 
 const LOCAL_STORAGE_KEY = "shopping-list";
@@ -57,7 +63,7 @@ function App() {
             });
           } else {
             setList([
-              { name: productName, quantity: productQuantity },
+              { name: productName, quantity: productQuantity, checked: false },
               ...list,
             ]);
 
@@ -75,18 +81,65 @@ function App() {
             key={item.name}
           >
             <div>
-              <h3 className="text-large font-semibold">{item.name}</h3>
+              <h3
+                className={`text-lg font-semibold${
+                  item.checked ? " text-muted-foreground line-through" : ""
+                }`}
+              >
+                {item.name}
+              </h3>
               <p className="text-sm text-muted-foreground">
                 Anzahl:{item.quantity}
               </p>
             </div>
-            <Button size={"lg"} variant={"outline"}>
-              <CheckCircleIcon />
-              Abhaken
-            </Button>
+            {item.checked ? (
+              <div className="flex gap-2">
+                <Button
+                  variant={"destructive"}
+                  size={"icon"}
+                  onClick={() => {
+                    setList([
+                      ...list.filter((listItem) => listItem.name !== item.name),
+                    ]);
+                    toast.error("Produkt gelöscht");
+                  }}
+                >
+                  <TrashIcon />
+                </Button>
+                <Button
+                  variant={"secondary"}
+                  onClick={() => {
+                    setList([
+                      {
+                        name: item.name,
+                        quantity: item.quantity,
+                        checked: false,
+                      },
+                      ...list.filter((listItem) => listItem.name !== item.name),
+                    ]);
+                  }}
+                >
+                  <Undo2Icon />
+                  Zurück
+                </Button>
+              </div>
+            ) : (
+              <Button
+                size={"lg"}
+                variant={"outline"}
+                onClick={() => {
+                  setList([
+                    ...list.filter((listItem) => listItem.name !== item.name),
+                    { name: item.name, quantity: item.quantity, checked: true },
+                  ]);
+                }}
+              >
+                <CheckCircleIcon />
+                Abhaken
+              </Button>
+            )}
           </div>
         ))}
-        ;
       </div>
     </div>
   );
